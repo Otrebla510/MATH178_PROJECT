@@ -10,6 +10,8 @@ import matplotlib.pyplot as plt
 train_fns = ['AllTaps/240168/240168_session_2.csv', 'AllTaps/240168/240168_session_12.csv', 'AllTaps/240168/240168_session_23.csv', 'AllTaps/240168/240168_session_7.csv', 'AllTaps/240168/240168_session_15.csv', 'AllTaps/240168/240168_session_24.csv', 'AllTaps/240168/240168_session_11.csv', 'AllTaps/240168/240168_session_10.csv', 'AllTaps/240168/240168_session_16.csv', 'AllTaps/240168/240168_session_22.csv', 'AllTaps/240168/240168_session_20.csv', 'AllTaps/240168/240168_session_19.csv']
 test_fns = ['AllTaps/240168/240168_session_1.csv', 'AllTaps/240168/240168_session_3.csv', 'AllTaps/240168/240168_session_4.csv', 'AllTaps/240168/240168_session_6.csv', 'AllTaps/240168/240168_session_8.csv', 'AllTaps/240168/240168_session_21.csv', 'AllTaps/240168/240168_session_5.csv', 'AllTaps/240168/240168_session_9.csv', 'AllTaps/240168/240168_session_13.csv', 'AllTaps/240168/240168_session_14.csv', 'AllTaps/240168/240168_session_17.csv', 'AllTaps/240168/240168_session_18.csv']
 
+train_fns_1 = ['AllTaps/100669/100669_session_1.csv', 'AllTaps/100669/100669_session_2.csv', 'AllTaps/100669/100669_session_3.csv', 'AllTaps/100669/100669_session_4.csv', 'AllTaps/100669/100669_session_5.csv', 'AllTaps/100669/100669_session_7.csv', 'AllTaps/100669/100669_session_9.csv', 'AllTaps/100669/100669_session_10.csv', 'AllTaps/100669/100669_session_14.csv', 'AllTaps/100669/100669_session_16.csv', 'AllTaps/100669/100669_session_17.csv', 'AllTaps/100669/100669_session_22.csv']
+test_fns_1 = ['AllTaps/100669/100669_session_11.csv', 'AllTaps/100669/100669_session_8.csv', 'AllTaps/100669/100669_session_18.csv', 'AllTaps/100669/100669_session_6.csv', 'AllTaps/100669/100669_session_12.csv', 'AllTaps/100669/100669_session_15.csv', 'AllTaps/100669/100669_session_19.csv', 'AllTaps/100669/100669_session_13.csv', 'AllTaps/100669/100669_session_23.csv', 'AllTaps/100669/100669_session_20.csv', 'AllTaps/100669/100669_session_21.csv', 'AllTaps/100669/100669_session_24.csv']
 
 def getDataFrame(filenames):
     length = len(filenames)
@@ -58,7 +60,7 @@ kmeans = pd.DataFrame(predictions)
 fig = plt.figure()
 ax = fig.add_subplot(111)
 scatter = ax.scatter(test_data['accelZ_restorationTime'], test_data['gyroZ_restorationTime'], c=kmeans[0])
-ax.set_title('K-Means Clustering')
+ax.set_title('User 240168 K-Means Clustering')
 ax.set_xlabel('accelZ_restorationTime')
 ax.set_ylabel('gyroZ_restorationTime')
 plt.show()
