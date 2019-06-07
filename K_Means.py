@@ -8,6 +8,7 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 
 # Practice using K-Means
+# Tutorial from: https://www.datacamp.com/community/tutorials/k-means-clustering-python#case
 
 train_data = pd.read_csv("train.csv")
 test_data = pd.read_csv("test.csv")
@@ -29,6 +30,7 @@ labelEncoder.fit(test_data['Sex'])
 train_data['Sex'] = labelEncoder.transform(train_data['Sex'])
 test_data['Sex'] = labelEncoder.transform(test_data['Sex'])
 
+print(train_data.head())
 # Drop Survived column(unsupervised)
 X = np.array(train_data.drop(['Survived'], 1).astype(float))
 
@@ -75,6 +77,7 @@ def test_accuracy(features, clusters, k_means):
 
 ######################################################################
 # Practice visualizing data
+# Tutorial from: https://www.kaggle.com/dhanyajothimani/basic-visualization-and-clustering-in-python/notebook
 
 wh = pd.read_csv("2017.csv")
 wh1 = wh[['Happiness.Score','Economy..GDP.per.Capita.','Family','Health..Life.Expectancy.', 'Freedom', 
@@ -93,7 +96,7 @@ kmeans = pd.DataFrame(clust_labels)
 wh1.insert((wh1.shape[1]),'kmeans',kmeans)
 
 #Plot the clusters obtained using k means
-fig = plt.figure()
+"""fig = plt.figure()
 ax = fig.add_subplot(111)
 scatter = ax.scatter(wh1['Economy..GDP.per.Capita.'],wh1['Trust..Government.Corruption.'],
                      c=kmeans[0],s=50)
@@ -101,4 +104,4 @@ ax.set_title('K-Means Clustering')
 ax.set_xlabel('GDP per Capita')
 ax.set_ylabel('Corruption')
 plt.colorbar(scatter)
-plt.show()
+plt.show()"""
