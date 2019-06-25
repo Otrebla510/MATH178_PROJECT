@@ -1,47 +1,105 @@
 # Dependencies
+import glob
 import pandas as pd
 import numpy as np
 from sklearn.cluster import KMeans
 from sklearn.decomposition import PCA
 from sklearn.manifold import Isomap
+from sklearn.manifold import SpectralEmbedding
 from sklearn.preprocessing import LabelEncoder
-from sklearn.preprocessing import MinMaxScaler
 from sklearn.preprocessing import StandardScaler
-import seaborn as sns
 import matplotlib.pyplot as plt
+from mpl_toolkits.mplot3d import Axes3D
 
 
-train_fns = ['AllTaps/326223/326223_session_1.csv', 'AllTaps/326223/326223_session_2.csv', 'AllTaps/326223/326223_session_3.csv', 'AllTaps/326223/326223_session_6.csv', 'AllTaps/326223/326223_session_7.csv', 'AllTaps/326223/326223_session_8.csv', 'AllTaps/326223/326223_session_12.csv', 'AllTaps/326223/326223_session_10.csv', 'AllTaps/326223/326223_session_13.csv', 'AllTaps/326223/326223_session_15.csv', 'AllTaps/326223/326223_session_19.csv', 'AllTaps/326223/326223_session_22.csv']
-test_fns = ['AllTaps/326223/326223_session_5.csv', 'AllTaps/326223/326223_session_9.csv', 'AllTaps/326223/326223_session_4.csv', 'AllTaps/326223/326223_session_11.csv', 'AllTaps/326223/326223_session_17.csv', 'AllTaps/326223/326223_session_24.csv', 'AllTaps/326223/326223_session_18.csv', 'AllTaps/326223/326223_session_16.csv', 'AllTaps/326223/326223_session_14.csv', 'AllTaps/326223/326223_session_21.csv', 'AllTaps/326223/326223_session_20.csv', 'AllTaps/326223/326223_session_23.csv']
-
-train_fns_1 = ['AllTaps/240168/240168_session_2.csv', 'AllTaps/240168/240168_session_12.csv', 'AllTaps/240168/240168_session_23.csv', 'AllTaps/240168/240168_session_7.csv', 'AllTaps/240168/240168_session_15.csv', 'AllTaps/240168/240168_session_24.csv', 'AllTaps/240168/240168_session_11.csv', 'AllTaps/240168/240168_session_10.csv', 'AllTaps/240168/240168_session_16.csv', 'AllTaps/240168/240168_session_22.csv', 'AllTaps/240168/240168_session_20.csv', 'AllTaps/240168/240168_session_19.csv']
-test_fns_1 = ['AllTaps/240168/240168_session_1.csv', 'AllTaps/240168/240168_session_3.csv', 'AllTaps/240168/240168_session_4.csv', 'AllTaps/240168/240168_session_6.csv', 'AllTaps/240168/240168_session_8.csv', 'AllTaps/240168/240168_session_21.csv', 'AllTaps/240168/240168_session_5.csv', 'AllTaps/240168/240168_session_9.csv', 'AllTaps/240168/240168_session_13.csv', 'AllTaps/240168/240168_session_14.csv', 'AllTaps/240168/240168_session_17.csv', 'AllTaps/240168/240168_session_18.csv']
-
-train_fns_2 = ['AllTaps/100669/100669_session_1.csv', 'AllTaps/100669/100669_session_2.csv', 'AllTaps/100669/100669_session_3.csv', 'AllTaps/100669/100669_session_4.csv', 'AllTaps/100669/100669_session_5.csv', 'AllTaps/100669/100669_session_7.csv', 'AllTaps/100669/100669_session_9.csv', 'AllTaps/100669/100669_session_10.csv', 'AllTaps/100669/100669_session_14.csv', 'AllTaps/100669/100669_session_16.csv', 'AllTaps/100669/100669_session_17.csv', 'AllTaps/100669/100669_session_22.csv']
-test_fns_2 = ['AllTaps/100669/100669_session_11.csv', 'AllTaps/100669/100669_session_8.csv', 'AllTaps/100669/100669_session_18.csv', 'AllTaps/100669/100669_session_6.csv', 'AllTaps/100669/100669_session_12.csv', 'AllTaps/100669/100669_session_15.csv', 'AllTaps/100669/100669_session_19.csv', 'AllTaps/100669/100669_session_13.csv', 'AllTaps/100669/100669_session_23.csv', 'AllTaps/100669/100669_session_20.csv', 'AllTaps/100669/100669_session_21.csv', 'AllTaps/100669/100669_session_24.csv']
-
-train_fns_3 = ['AllTaps/277905/277905_session_1.csv', 'AllTaps/277905/277905_session_2.csv', 'AllTaps/277905/277905_session_5.csv', 'AllTaps/277905/277905_session_6.csv', 'AllTaps/277905/277905_session_8.csv', 'AllTaps/277905/277905_session_9.csv', 'AllTaps/277905/277905_session_12.csv', 'AllTaps/277905/277905_session_13.csv', 'AllTaps/277905/277905_session_14.csv', 'AllTaps/277905/277905_session_15.csv', 'AllTaps/277905/277905_session_17.csv', 'AllTaps/277905/277905_session_22.csv']
-test_fns_3 = ['AllTaps/277905/277905_session_4.csv', 'AllTaps/277905/277905_session_3.csv', 'AllTaps/277905/277905_session_10.csv', 'AllTaps/277905/277905_session_7.csv', 'AllTaps/277905/277905_session_11.csv', 'AllTaps/277905/277905_session_16.csv', 'AllTaps/277905/277905_session_20.csv', 'AllTaps/277905/277905_session_21.csv', 'AllTaps/277905/277905_session_19.csv', 'AllTaps/277905/277905_session_23.csv', 'AllTaps/277905/277905_session_18.csv', 'AllTaps/277905/277905_session_24.csv']
-
-train_fns_4 = ['AllTaps/201848/201848_session_1.csv', 'AllTaps/201848/201848_session_2.csv', 'AllTaps/201848/201848_session_3.csv', 'AllTaps/201848/201848_session_4.csv', 'AllTaps/201848/201848_session_6.csv', 'AllTaps/201848/201848_session_7.csv', 'AllTaps/201848/201848_session_11.csv', 'AllTaps/201848/201848_session_15.csv', 'AllTaps/201848/201848_session_16.csv', 'AllTaps/201848/201848_session_18.csv', 'AllTaps/201848/201848_session_19.csv', 'AllTaps/201848/201848_session_21.csv']
-test_fns_4 = ['AllTaps/201848/201848_session_13.csv', 'AllTaps/201848/201848_session_10.csv', 'AllTaps/201848/201848_session_5.csv', 'AllTaps/201848/201848_session_8.csv', 'AllTaps/201848/201848_session_9.csv', 'AllTaps/201848/201848_session_14.csv', 'AllTaps/201848/201848_session_12.csv', 'AllTaps/201848/201848_session_24.csv', 'AllTaps/201848/201848_session_17.csv', 'AllTaps/201848/201848_session_22.csv', 'AllTaps/201848/201848_session_20.csv', 'AllTaps/201848/201848_session_23.csv']
-
-train_fns_5 = ['AllTaps/261313/261313_session_2.csv', 'AllTaps/261313/261313_session_3.csv', 'AllTaps/261313/261313_session_4.csv', 'AllTaps/261313/261313_session_5.csv', 'AllTaps/261313/261313_session_6.csv', 'AllTaps/261313/261313_session_7.csv', 'AllTaps/261313/261313_session_11.csv','AllTaps/261313/261313_session_13.csv', 'AllTaps/261313/261313_session_15.csv','AllTaps/261313/261313_session_18.csv', 'AllTaps/261313/261313_session_23.csv']
-test_fns_5 = ['AllTaps/261313/261313_session_8.csv', 'AllTaps/261313/261313_session_10.csv', 'AllTaps/261313/261313_session_19.csv', 'AllTaps/261313/261313_session_9.csv', 'AllTaps/261313/261313_session_12.csv', 'AllTaps/261313/261313_session_17.csv', 'AllTaps/261313/261313_session_20.csv', 'AllTaps/261313/261313_session_16.csv', 'AllTaps/261313/261313_session_21.csv', 'AllTaps/261313/261313_session_22.csv', 'AllTaps/261313/261313_session_24.csv']
+users = ['100669', '201848', '240168', '277905', '326223', '368258', '389015', '395129', '396697', '405035', '431312', '527796', '538363', '579284', '594887', '621276', '622852', '710707', '720193', '745224', '751131', '763813', '776328', '796581', '803262', '808022', '872895', '879155', '893255', '897652', '962159', '973891']
 
 
-def getDataFrame(filenames):
-    length = len(filenames)
-    data = pd.read_csv(filenames[0])
+def getFilenames(user):
+    train_ms = 0
+    train_rs = 0
+    train_ws = 0
+    train_mw = 0
+    train_rw = 0
+    train_ww = 0
 
-    for i in range(1, length):
-        new_data = pd.read_csv(filenames[i])
-        data = pd.concat([data, new_data], ignore_index=True) 
-    return data       
+    test_ms = 0
+    test_rs = 0
+    test_ws = 0
+    test_mw = 0
+    test_rw = 0
+    test_ww = 0
 
-def preprocessData(train_fn, test_fn):
-    train_data = getDataFrame(train_fn)
-    test_data = getDataFrame(test_fn)
+    train_data = pd.DataFrame()
+    test_data = pd.DataFrame()
+
+    path = 'AllTaps/' + user + '/*.csv' 
+    for fname in glob.glob(path):
+        data = pd.read_csv(fname)
+        if data['TaskName'][0] == 'Map+Sitting':
+            if test_ms < train_ms:
+                test_data = test_data.append(data, ignore_index=True)
+                test_ms += 1
+            else:
+                train_data = train_data.append(data, ignore_index=True)
+                train_ms += 1
+        if data['TaskName'][0] == 'Reading+Sitting':
+            if test_rs < train_rs:
+                test_data = test_data.append(data, ignore_index=True)
+                test_rs += 1
+            else:
+                train_data = train_data.append(data, ignore_index=True)
+                train_rs += 1
+        if data['TaskName'][0] == 'Writing+Sitting':
+            if test_ws < train_ws:
+                test_data = test_data.append(data, ignore_index=True)
+                test_ws += 1
+            else:
+                train_data = train_data.append(data, ignore_index=True)
+                train_ws += 1
+        if data['TaskName'][0] == 'Map+Walking':
+            if test_mw < train_mw:
+                test_data = test_data.append(data, ignore_index=True)
+                test_mw += 1
+            else:
+                train_data = train_data.append(data, ignore_index=True)
+                train_mw += 1
+        if data['TaskName'][0] == 'Reading+Walking':
+            if test_rw < train_rw:
+                test_data = test_data.append(data, ignore_index=True)
+                test_rw += 1
+            else:
+                train_data = train_data.append(data, ignore_index=True)
+                train_rw += 1
+        if data['TaskName'][0] == 'Writing+Walking':
+            if test_ww < train_ww:
+                test_data = test_data.append(data, ignore_index=True)
+                test_ww += 1
+            else:
+                train_data = train_data.append(data, ignore_index=True)
+                train_ww += 1
+    '''
+    print('Training------')
+    print('MS: ', train_ms)
+    print('RS: ', train_rs)
+    print('WS: ', train_ws)
+    print('MW: ', train_mw)
+    print('RW: ', train_rw)
+    print('WW: ', train_ww)
+
+    print('Testing------')
+    print('MS: ', test_ms)
+    print('RS: ', test_rs)
+    print('WS: ', test_ws)
+    print('MW: ', test_mw)
+    print('RW: ', test_rw)
+    print('WW: ', test_ww)
+    '''
+
+    return train_data, test_data
+
+def preprocessData(user):
+    train_data, test_data = getFilenames(user)
 
     # Fill missing values with mean column values in the train set and the test set
     train_data.fillna(train_data.mean(), inplace=True)
@@ -63,7 +121,6 @@ def preprocessData(train_fn, test_fn):
     X_data = np.concatenate((X_train, X_test))
 
     # Scale values
-    #scaler = MinMaxScaler()
     scaler = StandardScaler()
     scaler.fit(X_data)
     X_train_scaled = scaler.transform(X_train)
@@ -71,21 +128,29 @@ def preprocessData(train_fn, test_fn):
 
     return train_data, test_data, X_train_scaled, X_test_scaled
 
-def pca(X_train_scaled, X_test_scaled):
+def pca(X_train_scaled, X_test_scaled, num_components):
     # PCA
-    pca = PCA(n_components=2)
+    pca = PCA(n_components=num_components)
     X_train_pca = pca.fit_transform(X_train_scaled)
     X_test_pca = pca.fit_transform(X_test_scaled)
 
     return X_train_pca, X_test_pca
 
-def isomap(X_train_scaled, X_test_scaled):
+def isomap(X_train_scaled, X_test_scaled, num_components):
     # Isomap
-    embedding = Isomap(n_components=2)
+    embedding = Isomap(n_components=num_components)
     X_train_iso = embedding.fit_transform(X_train_scaled)
     X_test_iso = embedding.fit_transform(X_test_scaled)
 
     return X_train_iso, X_test_iso
+
+def se(X_train_scaled, X_test_scaled, num_components):
+    # Locally Linear Embedding
+    embedding = SpectralEmbedding(n_components=num_components)
+    X_train_se = embedding.fit_transform(X_train_scaled)
+    X_test_se = embedding.fit_transform(X_test_scaled)
+
+    return X_train_se, X_test_se
 
 def predictions(training, testing):
     # K-Means Clustering
@@ -98,57 +163,175 @@ def predictions(training, testing):
 
     return kmeans_predictions
 
-def visualizePCAResults(user, kmeans_predictions, test_data):
+def visualize2DPCAResults(user, kmeans_predictions, test_data):
     # Plot 2-Dimensional Data acquired from PCA
     test_df = pd.DataFrame(test_data)
-    plt.rcParams.update({'font.size': 30})
-    fig_1 = plt.figure()
-    ax = fig_1.add_subplot(111)
+    #plt.rcParams.update({'font.size': 30})
+    fig = plt.figure()
+    ax = fig.add_subplot(111)
     scatter = ax.scatter(test_df[0], test_df[1], c=kmeans_predictions[0])
-    title = 'User ' + user + ' PCA Results'
+    title = 'User ' + user + ' 2D PCA Results'
     ax.set_title(title)
     ax.set_xlabel('Component 1')
     ax.set_ylabel('Component 2')
-    plt.show()
 
-def visualizeIsomapResults(user, kmeans_predictions, test_data):
+    plot_name = user + '_pca2D_results.png'
+    save_plot = 'Visualizations/User ' + user + '/' + plot_name
+    fig.savefig(save_plot, bbox_inches='tight')
+    #plt.show()
+
+def visualize3DPCAResults(user, kmeans_predictions, test_data):
+    # Plot 3-Dimensional Data acquired from PCA
+    test_df = pd.DataFrame(test_data)
+    fig = plt.figure()
+    #plt.rcParams.update({'font.size': 30})
+    ax = plt.axes(projection='3d')
+    ax.scatter3D(test_df[0], test_df[1], test_df[2], c=kmeans_predictions[0])
+    title = 'User ' + user + ' 3D PCA Results'
+    ax.set_title(title)
+    ax.set_xlabel('Component 1')
+    ax.set_ylabel('Component 2')
+    ax.set_zlabel('Component 3')
+
+    plot_name = user + '_pca3D_results.png'
+    save_plot = 'Visualizations/User ' + user + '/' + plot_name
+    fig.savefig(save_plot, bbox_inches='tight')
+    #plt.show()
+
+def visualize2DIsomapResults(user, kmeans_predictions, test_data):
     # Plot 2-Dimensional Data acquired from Isomap
     test_df = pd.DataFrame(test_data)
-    plt.rcParams.update({'font.size': 30})
-    fig_1 = plt.figure()
-    ax = fig_1.add_subplot(111)
+    #plt.rcParams.update({'font.size': 30})
+    fig = plt.figure()
+    ax = fig.add_subplot(111)
     scatter = ax.scatter(test_df[0], test_df[1], c=kmeans_predictions[0])
-    title = 'User ' + user + ' Isomap Results'
+    title = 'User ' + user + ' 2D Isomap Results'
     ax.set_title(title)
     ax.set_xlabel('Component 1')
     ax.set_ylabel('Component 2')
-    plt.show()
 
-def visualizeKmeans(user, kmeans_predictions, test_data):
+    plot_name = user + '_isomap2D_results.png'
+    save_plot = 'Visualizations/User ' + user + '/' + plot_name
+    fig.savefig(save_plot, bbox_inches='tight')
+    #plt.show()
+
+def visualize3DIsomapResults(user, kmeans_predictions, test_data):
+    # Plot 3-Dimensional Data acquired from PCA
+    test_df = pd.DataFrame(test_data)
+    fig = plt.figure()
+    #plt.rcParams.update({'font.size': 30})
+    ax = plt.axes(projection='3d')
+    ax.scatter3D(test_df[0], test_df[1], test_df[2], c=kmeans_predictions[0])
+    title = 'User ' + user + ' 3D Isomap Results'
+    ax.set_title(title)
+    ax.set_xlabel('Component 1')
+    ax.set_ylabel('Component 2')
+    ax.set_zlabel('Component 3')
+
+    plot_name = user + '_isomap3D_results.png'
+    save_plot = 'Visualizations/User ' + user + '/' + plot_name
+    fig.savefig(save_plot, bbox_inches='tight')
+    #plt.show()
+
+def visualize2DSEResults(user, kmeans_predictions, test_data):
+    # Plot 2-Dimensional Data acquired from Isomap
+    test_df = pd.DataFrame(test_data)
+    #plt.rcParams.update({'font.size': 30})
+    fig = plt.figure()
+    ax = fig.add_subplot(111)
+    scatter = ax.scatter(test_df[0], test_df[1], c=kmeans_predictions[0])
+    title = 'User ' + user + ' 2D Spectral Embedding Results'
+    ax.set_title(title)
+    ax.set_xlabel('Component 1')
+    ax.set_ylabel('Component 2')
+
+    plot_name = user + '_spectral2D_results.png'
+    save_plot = 'Visualizations/User ' + user + '/' + plot_name
+    fig.savefig(save_plot, bbox_inches='tight')
+    #plt.show()
+
+def visualize3DSEResults(user, kmeans_predictions, test_data):
+    # Plot 3-Dimensional Data acquired from PCA
+    test_df = pd.DataFrame(test_data)
+    fig = plt.figure()
+    #plt.rcParams.update({'font.size': 30})
+    ax = plt.axes(projection='3d')
+    ax.scatter3D(test_df[0], test_df[1], test_df[2], c=kmeans_predictions[0])
+    title = 'User ' + user + ' 3D Spectral Embedding Results'
+    ax.set_title(title)
+    ax.set_xlabel('Component 1')
+    ax.set_ylabel('Component 2')
+    ax.set_zlabel('Component 3')
+
+    plot_name = user + '_spectral3D_results.png'
+    save_plot = 'Visualizations/User ' + user + '/' + plot_name
+    fig.savefig(save_plot, bbox_inches='tight')
+    #plt.show()
+
+def visualizeKmeans(user, kmeans_predictions, test_data, method, method_name, dimensions):
     # Visualize results
-    plt.rcParams.update({'font.size': 30})
-    fig_2 = plt.figure()
-    ax = fig_2.add_subplot(111)
+    #plt.rcParams.update({'font.size': 30})
+    fig = plt.figure()
+    ax = fig.add_subplot(111)
     scatter = ax.scatter(test_data['accelZ_restorationTime'], test_data['gyroZ_restorationTime'], c=kmeans_predictions[0])
-    title = 'User ' + user + ' K-Means Clustering'
+    title = 'User ' + user + ' ' + method + 'K-Means Clustering'
     ax.set_title(title)
     ax.set_xlabel('accelZ_restorationTime')
     ax.set_ylabel('gyroZ_restorationTime')
-    plt.show()
 
-'''
-def main(user, train_fns, test_fns):
-    train_data, test_data, X_train_scaled, X_test_scaled = preprocessData(train_fns, test_fns)
-    X_train_pca, X_test_pca = pca(X_train_scaled, X_test_scaled)
-    X_train_iso, X_test_iso = isomap(X_train_scaled, X_test_scaled)
+    if method_name == '':
+        plot_name = user + 'z_kmeans.png'
+    else:
+        if dimensions == 2:
+            plot_name = user + 'z_' + method_name + '2D_kmeans.png'
+        if dimensions == 3:
+            plot_name = user + 'z_' + method_name + '3D_kmeans.png'
+    save_plot = 'Visualizations/User ' + user + '/' + plot_name
+    fig.savefig(save_plot, bbox_inches='tight')
+    #plt.show()
+
+def visualize(user):
+    # Preprocess Data
+    train_data, test_data, X_train_scaled, X_test_scaled = preprocessData(user)
+    X_train_pca_2, X_test_pca_2 = pca(X_train_scaled, X_test_scaled, 2)
+    X_train_iso_2, X_test_iso_2 = isomap(X_train_scaled, X_test_scaled, 2)
+    X_train_se_2, X_test_se_2 = se(X_train_scaled, X_test_scaled, 2)
+    X_train_pca_3, X_test_pca_3 = pca(X_train_scaled, X_test_scaled, 3)
+    X_train_iso_3, X_test_iso_3 = isomap(X_train_scaled, X_test_scaled, 3)
+    X_train_se_3, X_test_se_3 = se(X_train_scaled, X_test_scaled, 3)
 
     # Predictions
     kmeans_predictions = predictions(X_train_scaled, X_test_scaled)
-    kmeans_predictions_pca = predictions(X_train_pca, X_test_pca)
-    kmeans_predictions_iso = predictions(X_train_iso, X_test_iso)
+    kmeans_predictions_pca_2 = predictions(X_train_pca_2, X_test_pca_2)
+    kmeans_predictions_iso_2 = predictions(X_train_iso_2, X_test_iso_2)
+    kmeans_predictions_se_2 = predictions(X_train_se_2, X_test_se_2)
+    kmeans_predictions_pca_3 = predictions(X_train_pca_3, X_test_pca_3)
+    kmeans_predictions_iso_3 = predictions(X_train_iso_3, X_test_iso_3)
+    kmeans_predictions_se_3 = predictions(X_train_se_3, X_test_se_3)
 
-    # Visualize results
-    visualizeKmeans(user, kmeans_predictions, test_data)
-    visualizePCAResults(user , kmeans_predictions_pca, X_test_pca)
-    visualizeIsomapResults(user , kmeans_predictions_iso, X_test_iso)
-    '''
+    # Visualize Kmeans results
+    visualizeKmeans(user, kmeans_predictions, test_data, '', '', 0)
+    visualizeKmeans(user, kmeans_predictions_pca_2, test_data, '2D PCA ', 'pca', 2)
+    visualizeKmeans(user, kmeans_predictions_iso_2, test_data, '2D Isomap ', 'isomap', 2)
+    visualizeKmeans(user, kmeans_predictions_se_2, test_data, '2D Spectral Embedding ', 'spectral', 2)
+    visualizeKmeans(user, kmeans_predictions_pca_3, test_data, '3D PCA ', 'pca', 3)
+    visualizeKmeans(user, kmeans_predictions_iso_3, test_data, '3D Isomap ', 'isomap', 3)
+    visualizeKmeans(user, kmeans_predictions_se_3, test_data, '3D Spectral Embedding ', 'spectral', 3)
+
+    # 2D Visualization
+    visualize2DPCAResults(user, kmeans_predictions_pca_2, X_test_pca_2)
+    visualize2DIsomapResults(user, kmeans_predictions_iso_2, X_test_iso_2)
+    visualize2DSEResults(user, kmeans_predictions_se_2, X_test_se_2)
+    
+    # 3D Visualization
+    visualize3DPCAResults(user, kmeans_predictions_pca_3, X_test_pca_3)
+    visualize3DIsomapResults(user, kmeans_predictions_iso_3, X_test_iso_3)
+    visualize3DSEResults(user, kmeans_predictions_se_3, X_test_se_3)
+
+def main(users):
+    for i in range(18, 33):
+        visualize(users[i])
+        string = 'Done with ' + users[i]
+        print(string)
+
+main(users)
